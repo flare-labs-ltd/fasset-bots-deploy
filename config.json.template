@@ -1,0 +1,9 @@
+{
+     "extends": "coston-bot-postgresql.json",
+     "apiNotifierConfigs": [
+        {
+             "apiKey": "",
+             "apiUrl": "http://localhost:1234/"
+        }
+     ]
+}

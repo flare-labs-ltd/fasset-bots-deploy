@@ -1,0 +1,90 @@
+services:
+  postgres:
+    profiles: [agent]
+    image: postgres:15
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres
+    environment:
+      DEBUG: "true"
+      POSTGRES_USER: ${FASSET_DB_USER}
+      POSTGRES_PASSWORD: ${FASSET_DB_PASSWORD}
+      POSTGRES_DB: fasset_bots
+    # for testing
+    #ports:
+    #  - "15432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      #- ./init.postgresql.sql:/docker-entrypoint-initdb.d/init.postgresql.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d fasset_bots -h 127.0.0.1"]
+      timeout: 20s
+      retries: 10
+
+  app:
+    profiles: [agent]
+    image: fasset-bots
+    #build:
+    #  context: ../fasset-bots
+    container_name: ${COMPOSE_PROJECT_NAME}
+    #user: node
+    environment:
+      DB_HOST: postgress
+      DB_USER: ${FASSET_DB_USER}
+      DB_PASSWORD: ${FASSET_DB_PASSWORD}
+      DB_NAME: fasset_bots
+      DB_PORT: 5432
+    # for back-end
+    ports:
+      - "$BACKEND_PORT:1234"
+    volumes:
+      - ./.env:/usr/src/app/.env
+      - ./secrets.json:/usr/src/app/secrets.json
+      - ./config.json:/usr/src/app/config.json
+
+    # Start run-agent and ui backend
+    #command: ["/bin/sh"]
+    command: "/bin/sh -c '(mkdir log) && (yarn start_agent_api > log/agent_ui.log &) && (yarn run-agent > log/agent_run.log &) && (/bin/sh)'"
+
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  liquidator:
+    profiles: [liquidator]
+    image: fasset-bots
+    container_name: ${COMPOSE_PROJECT_NAME}-liquidator
+    volumes:
+      - ./.env:/usr/src/app/.env
+      - ./secrets.json:/usr/src/app/secrets.json
+      - ./config.json:/usr/src/app/config.json
+
+    # Start run-agent and ui backend
+    command: "/bin/sh -c '(mkdir log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
+
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ui:
+    profiles: [agent-ui]
+    image: fasset-agent-ui
+    #build:
+    #  #context: ../fasset-agent-ui
+    #  context: ../FAsset-agent-UI
+    container_name: ${COMPOSE_PROJECT_NAME}-ui
+    ports:
+      - "$AGENT_UI_PORT:3000"
+    volumes:
+      - ./.env:/app/.env
+
+    # Start with running the agent
+    command: ["npm", "run", "dev"]
+
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres-db:

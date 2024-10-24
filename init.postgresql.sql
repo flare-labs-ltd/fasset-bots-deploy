@@ -1,0 +1,4 @@
+CREATE USER fassetbot;
+ALTER USER fassetbot WITH ENCRYPTED PASSWORD superS3cr3tP4ssw0rD;
+CREATE DATABASE fasset_bots;
+GRANT ALL PRIVILEGES ON DATABASE fasset_bots TO fassetbot;
