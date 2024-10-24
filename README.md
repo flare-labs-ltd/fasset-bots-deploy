@@ -1,6 +1,7 @@
 # FASSET Bot Deploy
 
-IMPORTANT: Not working yet because docker images are not yet available.
+IMPORTANT: docker images for fasset-bots and fasset-agent-ui must be currently created manually. 
+I must find a hosting for docker image deployment.
 
 ## Requirements
 Docker version 25.0.4 or higher.
