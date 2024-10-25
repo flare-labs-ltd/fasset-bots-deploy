@@ -70,7 +70,9 @@ services:
 
   ui:
     profiles: [agent-ui]
-    image: fasset-agent-ui
+    #image: fasset-agent-ui
+    image: ghcr.io/acex-si/fasset-agent-ui:latest
+
     #build:
     #  #context: ../fasset-agent-ui
     #  context: ../FAsset-agent-UI
