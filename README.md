@@ -1,7 +1,6 @@
 # FASSET Bot Deploy
 
-IMPORTANT: docker images for fasset-bots and fasset-agent-ui must be currently created manually. 
-I must find a hosting for docker image deployment.
+IMPORTANT: docker image for fasset-bots must be currently created manually. 
 
 ## Requirements
 Docker version 25.0.4 or higher.
@@ -39,6 +38,8 @@ Profiles
 ### Generate secrets.json
 
 Run `./generateSecrets <your_agent_address>`.
+
+Copy `secrets.new.json` into `secrets.json`.
 
 Make backup of the `secrets.json`.
 
