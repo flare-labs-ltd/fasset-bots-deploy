@@ -10,13 +10,14 @@ Docker Compose version v2.24.7 or higher
 Tested on Ubuntu 22.04.4 LTS.
 
 ## Install
-Clone repository.
 
-Copy `.env.template` to `.env`. 
+1. Clone repository.
 
-Copy `config.json.template` into `config.json`.
+2. Copy `.env.template` to `.env`. 
 
-Run `docker compose pull`.
+3. Copy `config.json.template` into `config.json`.
+
+4. Run `docker compose pull`.
 
 ## Settings
 
@@ -39,7 +40,7 @@ Profiles
 
 Run `./generateSecrets <your_agent_address>`.
 
-Copy `secrets.new.json` into `secrets.json`.
+Copy `secrets.new.json` into `secrets.json` and set file mode to 600 (`chmod 600 secrets.json`).
 
 Make backup of the `secrets.json`.
 

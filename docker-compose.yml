@@ -37,6 +37,7 @@ services:
       - "$BACKEND_PORT:1234"
     volumes:
       - ./.env:/usr/src/app/.env
+      - ./.env.bots-api:/usr/src/app/packages/fassets-bots-api/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
 
