@@ -27,7 +27,7 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}
     #user: node
     environment:
-      DB_HOST: postgress
+      DB_HOST: postgres
       DB_USER: ${FASSET_DB_USER}
       DB_PASSWORD: ${FASSET_DB_PASSWORD}
       DB_NAME: fasset_bots

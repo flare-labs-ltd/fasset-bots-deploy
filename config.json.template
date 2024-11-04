@@ -1,5 +1,17 @@
 {
      "extends": "coston-bot-postgresql.json",
+     "ormOptions": {
+        "type": "postgresql",
+        "dbName": "fasset_bots",
+        "host": "postgres",
+        "port": 5432,
+        "allowGlobalContext": true,
+        "pool": {
+            "min": 0,
+            "max": 80,
+            "acquireTimeoutMillis": 60000
+        }
+     },     
      "apiNotifierConfigs": [
         {
              "apiKey": "",
