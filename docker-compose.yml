@@ -21,7 +21,8 @@ services:
 
   app:
     profiles: [agent]
-    image: fasset-bots
+    #image: fasset-bots
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     #build:
     #  context: ../fasset-bots
     container_name: ${COMPOSE_PROJECT_NAME}
@@ -53,7 +54,8 @@ services:
 
   liquidator:
     profiles: [liquidator]
-    image: fasset-bots
+    #image: fasset-bots
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
       - ./.env:/usr/src/app/.env
