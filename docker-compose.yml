@@ -13,7 +13,6 @@ services:
     #  - "15432:5432"
     volumes:
       - postgres-db:/var/lib/postgresql/data
-      #- ./init.postgresql.sql:/docker-entrypoint-initdb.d/init.postgresql.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d fasset_bots -h 127.0.0.1"]
       timeout: 20s
@@ -23,16 +22,15 @@ services:
     profiles: [agent]
     #image: fasset-bots
     image: ghcr.io/flare-labs-ltd/fasset-bots:latest
-    #build:
-    #  context: ../fasset-bots
     container_name: ${COMPOSE_PROJECT_NAME}
-    #user: node
     environment:
       DB_HOST: postgres
       DB_USER: ${FASSET_DB_USER}
       DB_PASSWORD: ${FASSET_DB_PASSWORD}
       DB_NAME: fasset_bots
       DB_PORT: 5432
+      FASSET_DB_USER: ${FASSET_DB_USER}
+      FASSET_DB_PASSWORD: ${FASSET_DB_PASSWORD}
     # for back-end
     ports:
       - "$BACKEND_PORT:1234"
@@ -43,8 +41,8 @@ services:
       - ./config.json:/usr/src/app/config.json
 
     # Start run-agent and ui backend
-    #command: ["/bin/sh"]
-    command: "/bin/sh -c '(mkdir log) && (yarn start_agent_api > log/agent_ui.log &) && (yarn run-agent > log/agent_run.log &) && (/bin/sh)'"
+    #command: "/bin/sh -c '(mkdir -p log) && (yarn start_agent_api > log/agent_ui.log &) && (yarn run-agent > log/agent_run.log &) && (/bin/sh)'"
+    command: "./entry.sh run-agents"
 
     stdin_open: true
     tty: true
@@ -63,7 +61,8 @@ services:
       - ./config.json:/usr/src/app/config.json
 
     # Start run-agent and ui backend
-    command: "/bin/sh -c '(mkdir log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
+    #command: "/bin/sh -c '(mkdir -p log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
+    command: "./entry.sh run-liquidator"
 
     stdin_open: true
     tty: true
@@ -73,12 +72,7 @@ services:
 
   ui:
     profiles: [agent-ui]
-    #image: fasset-agent-ui
     image: ghcr.io/acex-si/fasset-agent-ui:latest
-
-    #build:
-    #  #context: ../fasset-agent-ui
-    #  context: ../FAsset-agent-UI
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     ports:
       - "$AGENT_UI_PORT:3000"

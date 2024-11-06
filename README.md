@@ -29,7 +29,7 @@ This must be set:
 Optionaly set these:
 - front end port `AGENT_UI_PORT`
 - back end port `BACKEND_PORT`
-- database password `FASSET_DB_PASSWORD`
+- database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not changed automatically by chainging it in `.env` file.
 
 Profiles
 - agent
