@@ -82,7 +82,8 @@ services:
 
     # Start with running the agent
     #command: ["npm", "run", "dev"]
-    command: ["npm", "run", "start"]
+    #command: ["npm", "run", "start"]
+    command: "/bin/sh -c '(npm run build) && (npm run start)'"
 
     stdin_open: true
     tty: true

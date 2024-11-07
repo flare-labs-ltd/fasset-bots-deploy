@@ -7,6 +7,8 @@ Docker Compose version v2.24.7 or higher
 
 Tested on Ubuntu 22.04.4 LTS.
 
+Your agent management address must be whitelisted.
+
 ## Install
 
 1. Clone repository.
@@ -45,6 +47,14 @@ Copy `secrets.new.json` into `secrets.json` and set file mode to 600 (`chmod 600
 
 Make backup of the `secrets.json`.
 
+Fund your management address with native token (e.g. CFLR, SGB, FLR).
+
+Fund your work address with native (e.g. CFLR, SGB, FLR) and vault token (e.g. testETH, testUSDT, ETH, USDT) (@secrets.json `owner.native.address`).
+
+Fund your underlying address with underlying token (e.g. testXRP, testBTC, XRP, BTC) (e.g. @secrets.json `owner.testXRP.address`).)
+
+Setup your work address `https://coston-explorer.flare.network/address/0x090a3E40E9E1e0Acfc5D78Ed201Ef25Deb3aB8C1/write-contract#address-tabs`
+
 ### NGINX
 
 Default settings for nginx are:
@@ -66,9 +76,16 @@ Default settings for nginx are:
 Run `docker compose up -d`.
 
 
+### Test
+
+Best way to test if back end is working is to check whitelisted address:
+$API_URL/agent/whitelisted
+
+
 ## Update and restart
 ```
 docker compose down
+git pull
 docker compose pull
 docker compose up -d
 ```
