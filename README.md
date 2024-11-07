@@ -1,7 +1,5 @@
 # FASSET Bot Deploy
 
-IMPORTANT: docker image for fasset-bots must be currently created manually. 
-
 ## Requirements
 Docker version 25.0.4 or higher.
 
@@ -21,14 +19,17 @@ Tested on Ubuntu 22.04.4 LTS.
 
 ## Settings
 
-Settings are in `.env`.
+All settings are in `.env`.
 
 This must be set:
-- machine address `MACHINE_NAME`
+- machine address `MACHINE_ADDRESS`
 
 Optionaly set these:
-- front end port `AGENT_UI_PORT`
-- back end port `BACKEND_PORT`
+- front end port `FRONTEND_PORT`. Default front end port is 3000.
+- front end url `FRONTEND_URL`. Default is `/` (example `/agent1`).
+- front end password `FRONTEND_PASSWORD`
+- back end port `BACKEND_PORT`. Default front end port is 4000.
+- back end url `BACKEND_URL`. Default is `/fasset-backend`.
 - database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not changed automatically by chainging it in `.env` file.
 
 Profiles
@@ -46,17 +47,17 @@ Make backup of the `secrets.json`.
 
 ### NGINX
 
-Settings for nginx are:
+Default settings for nginx are:
 ```
-        location /fasset-backend {
+        location /fasset-backend { # use BACKEND_URL
            rewrite /fasset-backend/(.*) /api/$1  break;
            proxy_set_header Host $http_host;
-           proxy_pass         http://localhost:11234; # use BACKEND_PORT
+           proxy_pass         http://localhost:4000; # use BACKEND_PORT
         }
 
-        location / {
+        location / { # use FRONTEND_URL
            proxy_set_header Host $http_host;
-           proxy_pass         http://localhost:3000; # use AGENT_UI_PORT
+           proxy_pass         http://localhost:3000; # use FRONTEND_PORT
         }
 ```
 

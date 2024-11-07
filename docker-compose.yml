@@ -76,7 +76,7 @@ services:
     image: ghcr.io/acex-si/fasset-agent-ui:latest
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     ports:
-      - "$AGENT_UI_PORT:3000"
+      - "$FRONTEND_PORT:3000"
     volumes:
       - ./.env:/app/.env
 
