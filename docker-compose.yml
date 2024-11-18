@@ -1,6 +1,6 @@
 services:
   postgres:
-    profiles: [agent]
+    profiles: [agent,liquidator,challenger]
     image: postgres:15
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
     environment:
@@ -53,7 +53,6 @@ services:
 
   liquidator:
     profiles: [liquidator]
-    #image: fasset-bots
     image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
@@ -70,6 +69,26 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+
+  challenger:
+    profiles: [challenger]
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-challenger
+    volumes:
+      - ./.env:/usr/src/app/.env
+      - ./secrets.json:/usr/src/app/secrets.json
+      - ./config.json:/usr/src/app/config.json
+
+    # Start run-agent and ui backend
+    #command: "/bin/sh -c '(mkdir -p log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
+    command: "./entry.sh run-challenger"
+
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy        
 
   ui:
     profiles: [agent-ui]

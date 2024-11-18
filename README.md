@@ -38,6 +38,7 @@ Profiles
 - agent
 - agent-ui
 - liquidator
+- challenger
 
 ### Generate secrets.json
 
