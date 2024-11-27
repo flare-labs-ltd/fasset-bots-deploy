@@ -11,7 +11,8 @@ Tested on Ubuntu 22.04.4 LTS.
 
 ## Prerequisites
 
-Your agent management address must be whitelisted.
+- Your agent management address must be whitelisted.
+- Procure underlying nodes rpc api keys (DOGE, XRP, BTC).
 
 ## Install
 
@@ -49,9 +50,11 @@ Profiles
 Run `./generateSecrets.sh <your_agent_address>`.
 
 Copy `secrets.new.json` into `secrets.json` and set file mode to 600 `chmod 600 secrets.json`.
-Set file ownership to user 1000 `chown 1000:100 secrets.json`.
+Set file ownership to user 1000 `chown 1000:1000 secrets.json`.
 
 Make backup of the `secrets.json`.
+
+Setup nodes rpc api keys.
 
 
 ### Funding addresses
@@ -64,7 +67,7 @@ Fund your underlying address with underlying token (e.g. XRP, BTC, XRP, BTC) (ge
 
 TODO: update setup address for Songbird and Flare
 
-Setup your work address `https://coston-explorer.flare.network/address/0x090a3E40E9E1e0Acfc5D78Ed201Ef25Deb3aB8C1/write-contract#address-tabs`
+Setup your work address `https://coston-explorer.flare.network/address/0x48985D96B5758285cB2c1A528c02da08BB874651/write-contract#address-tabs`
 
 ### NGINX
 
@@ -85,13 +88,6 @@ Default settings for nginx are:
 ### Start up
 
 Run `docker compose up -d`.
-
-
-### Test
-
-Best way to test if back end is working is to check whitelisted address:
-$API_URL/agent/whitelisted
-
 
 ## Update and restart
 ```
