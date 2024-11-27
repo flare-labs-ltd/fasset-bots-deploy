@@ -1,11 +1,15 @@
 # FASSET Bot Deploy
 
 ## Requirements
+AMD64 machine.
+
 Docker version 25.0.4 or higher.
 
 Docker Compose version v2.24.7 or higher
 
 Tested on Ubuntu 22.04.4 LTS.
+
+## Prerequisites
 
 Your agent management address must be whitelisted.
 
@@ -13,7 +17,7 @@ Your agent management address must be whitelisted.
 
 1. Clone repository.
 
-2. Copy `.env.template` to `.env`. 
+2. Copy `.env.template` to `.env`.
 
 3. Copy `config.json.template` into `config.json`.
 
@@ -42,17 +46,23 @@ Profiles
 
 ### Generate secrets.json
 
-Run `./generateSecrets <your_agent_address>`.
+Run `./generateSecrets.sh <your_agent_address>`.
 
-Copy `secrets.new.json` into `secrets.json` and set file mode to 600 (`chmod 600 secrets.json`).
+Copy `secrets.new.json` into `secrets.json` and set file mode to 600 `chmod 600 secrets.json`.
+Set file ownership to user 1000 `chown 1000:100 secrets.json`.
 
 Make backup of the `secrets.json`.
 
-Fund your management address with native token (e.g. CFLR, SGB, FLR).
 
-Fund your work address with native (e.g. CFLR, SGB, FLR) and vault token (e.g. testETH, testUSDT, ETH, USDT) (@secrets.json `owner.native.address`).
+### Funding addresses
+Fund your management address with native token (e.g. SGB, FLR).
 
-Fund your underlying address with underlying token (e.g. testXRP, testBTC, XRP, BTC) (e.g. @secrets.json `owner.testXRP.address`).)
+Fund your work address with native token (e.g. SGB, FLR) and vault token (e.g. ETH, USDX) (get addresse from file `secrets.json` key `owner.native.address`).
+
+Fund your underlying address with underlying token (e.g. XRP, BTC, XRP, BTC) (get addressed from file `secrets.json` key  `owner.<token>.address`).)
+
+
+TODO: update setup address for Songbird and Flare
 
 Setup your work address `https://coston-explorer.flare.network/address/0x090a3E40E9E1e0Acfc5D78Ed201Ef25Deb3aB8C1/write-contract#address-tabs`
 
