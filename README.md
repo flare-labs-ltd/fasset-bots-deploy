@@ -1,4 +1,4 @@
-# FASSET Bot Deploy
+# FAsset Agent Deployment
 
 ## Requirements
 AMD64 machine.
