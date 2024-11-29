@@ -14,7 +14,7 @@
      },     
      "apiNotifierConfigs": [
         {
-             "apiKey": "",
+             "apiKey": "someAp1K3y",
              "apiUrl": "http://localhost:1234/"
         }
      ]
