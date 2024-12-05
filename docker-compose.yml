@@ -40,9 +40,11 @@ services:
       - ./config/.env.bots-api:/usr/src/app/packages/fasset-bots-api/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
+      # export logs
+      - ./log/app:/usr/src/app/log/      
+      - ./log/app-bots-api:/usr/src/app/packages/fasset-bots-api/log/      
 
     # Start run-agent and ui backend
-    #command: "/bin/sh -c '(mkdir -p log) && (yarn start_agent_api > log/agent_ui.log &) && (yarn run-agent > log/agent_run.log &) && (/bin/sh)'"
     command: "./entry.sh run-bots"
 
     stdin_open: true
@@ -59,9 +61,10 @@ services:
       - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
+      # export logs
+      - ./log/liquidator:/usr/src/app/log/
 
     # Start run-agent and ui backend
-    #command: "/bin/sh -c '(mkdir -p log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
     command: "./entry.sh run-liquidator"
 
     stdin_open: true
@@ -79,9 +82,10 @@ services:
       - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
+      # export logs
+      - ./log/challenger:/usr/src/app/log/
 
     # Start run-agent and ui backend
-    #command: "/bin/sh -c '(mkdir -p log) && (yarn run-liquidator > log/liquidator_run.log &) && (/bin/sh)'"
     command: "./entry.sh run-challenger"
 
     stdin_open: true
@@ -100,8 +104,6 @@ services:
       - ./.env:/app/.env
 
     # Start with running the agent
-    #command: ["npm", "run", "dev"]
-    #command: ["npm", "run", "start"]
     command: "/bin/sh -c '(npm run build) && (npm run start)'"
 
     stdin_open: true
