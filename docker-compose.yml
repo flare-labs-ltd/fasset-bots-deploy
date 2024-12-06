@@ -32,6 +32,7 @@ services:
       FASSET_DB_USER: ${FASSET_DB_USER}
       FASSET_DB_PASSWORD: ${FASSET_DB_PASSWORD}
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
+      ROOT_PATH: ${ROOT_PATH}
     # for back-end
     ports:
       - "$BACKEND_PORT:1234"
