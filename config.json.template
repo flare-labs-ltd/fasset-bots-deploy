@@ -1,5 +1,5 @@
 {
-     "extends": "coston-bot-postgresql.json",
+     "extends": "songbird-bot-postgresql.json",
      "ormOptions": {
         "type": "postgresql",
         "dbName": "fasset_bots",
