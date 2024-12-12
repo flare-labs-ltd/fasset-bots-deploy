@@ -15,7 +15,7 @@
      "apiNotifierConfigs": [
         {
              "apiKey": "someAp1K3y",
-             "apiUrl": "http://localhost:1234/"
+             "apiUrl": "http://localhost:1234/fasset-backend"
         }
      ]
 }
