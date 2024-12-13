@@ -4,17 +4,17 @@ services:
     image: postgres:15
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
     environment:
-      DEBUG: "true"
+      POSTGRES_DB: ${FASSET_DB_NAME}
       POSTGRES_USER: ${FASSET_DB_USER}
       POSTGRES_PASSWORD: ${FASSET_DB_PASSWORD}
-      POSTGRES_DB: fasset_bots
+      DEBUG: "true"
     # for testing
     #ports:
     #  - "15432:5432"
     volumes:
       - postgres-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d fasset_bots -h 127.0.0.1"]
+      test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d ${FASSET_DB_NAME} -h 127.0.0.1"]
       timeout: 20s
       retries: 10
 
@@ -24,15 +24,15 @@ services:
     image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
     container_name: ${COMPOSE_PROJECT_NAME}
     environment:
+      DB_NAME: ${FASSET_DB_NAME}
       DB_HOST: postgres
+      DB_PORT: ${FASSET_DB_PORT}
       DB_USER: ${FASSET_DB_USER}
       DB_PASSWORD: ${FASSET_DB_PASSWORD}
-      DB_NAME: fasset_bots
-      DB_PORT: 5432
       FASSET_DB_USER: ${FASSET_DB_USER}
       FASSET_DB_PASSWORD: ${FASSET_DB_PASSWORD}
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
-      ROOT_PATH: ${ROOT_PATH}
+      ROOT_PATH: ${FRONTEND_BACKEND_PATH}
     # for back-end
     ports:
       - "$BACKEND_PORT:1234"
@@ -42,8 +42,8 @@ services:
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       # export logs
-      - ./log/app:/usr/src/app/log/      
-      - ./log/app-bots-api:/usr/src/app/packages/fasset-bots-api/log/      
+      - ./log/app:/usr/src/app/log/
+      - ./log/app-bots-api:/usr/src/app/packages/fasset-bots-api/log/
 
     # Start run-agent and ui backend
     command: "./entry.sh run-bots"
@@ -74,7 +74,6 @@ services:
       postgres:
         condition: service_healthy
 
-
   challenger:
     profiles: [challenger]
     image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
@@ -93,7 +92,7 @@ services:
     tty: true
     depends_on:
       postgres:
-        condition: service_healthy        
+        condition: service_healthy
 
   agent-bot:
     profiles: [cli]
@@ -131,6 +130,11 @@ services:
     profiles: [agent-ui]
     image: ghcr.io/flare-labs-ltd/fasset-agent-ui:songbird-release
     container_name: ${COMPOSE_PROJECT_NAME}-ui
+    environment:
+      API_URL: ${FRONTEND_BACKEND_URL}
+      FRONT_URL: ${FRONTEND_PATH}
+      FRONTEND_URL: ${FRONTEND_URL}
+      WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
     ports:
       - "$FRONTEND_PORT:3000"
     volumes:
