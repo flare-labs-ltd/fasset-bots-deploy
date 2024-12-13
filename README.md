@@ -37,10 +37,10 @@ This must be set:
 
 Optionaly set these:
 - front end port `FRONTEND_PORT`. Default front end port is 3000.
-- front end url `FRONTEND_URL`. Default is `/` (example `/agent1`).
+- front end url `FRONTEND_PATH`. Default is `/` (example `/agent1`).
 - front end password `FRONTEND_PASSWORD`
 - back end port `BACKEND_PORT`. Default front end port is 4000.
-- back end url `BACKEND_URL`. Default is `/fasset-backend` IMPORTANT this change must also be set in `config.json` `apiNotifierConfigs.apiUrl`.
+- back end url `BACKEND_PATH`. Default is `/fasset-backend` IMPORTANT this change must also be set in `config.json` `apiNotifierConfigs.apiUrl`.
 - database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not update automatically if changed in `.env` file.
 
 Profiles
