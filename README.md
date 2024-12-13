@@ -14,6 +14,10 @@ Tested on Ubuntu 22.04.4 LTS.
 - Your agent management address must be whitelisted.
 - Procure underlying nodes rpc api keys (DOGE, XRP, BTC).
 
+### Security
+
+Make sure you follow best practices to protect you server and data.
+
 ## Install
 
 1. Clone repository.
@@ -69,22 +73,6 @@ TODO: update setup address for Songbird and Flare
 
 Setup your work address `https://coston-explorer.flare.network/address/0x48985D96B5758285cB2c1A528c02da08BB874651/write-contract#address-tabs`
 
-### NGINX
-
-Default settings for nginx are:
-```
-        location /fasset-backend { # use BACKEND_URL
-           rewrite /fasset-backend/(.*) /api/$1  break;
-           proxy_set_header Host $http_host;
-           proxy_pass         http://localhost:4000; # use BACKEND_PORT
-        }
-
-        location / { # use FRONTEND_URL
-           proxy_set_header Host $http_host;
-           proxy_pass         http://localhost:3000; # use FRONTEND_PORT
-        }
-```
-
 ### Start up
 
 Run `docker compose up -d`.
@@ -97,4 +85,10 @@ docker compose pull
 docker compose up -d
 ```
 
+### Backup 
 
+Make sure you backup at least:
+- `.env`
+- `secrets.json`
+- `config.json`
+-  database docker volume (default: `fasset-agent_postgres-db`)

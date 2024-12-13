@@ -97,7 +97,7 @@ services:
 
   ui:
     profiles: [agent-ui]
-    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:latest_staging
+    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:songbird-release
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     ports:
       - "$FRONTEND_PORT:3000"
