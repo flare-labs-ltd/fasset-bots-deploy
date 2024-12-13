@@ -5,11 +5,10 @@ source <(grep -v '^#' "./.env" | sed -E 's|^(.+)=(.*)$|: ${\1=\2}; export \1|g')
 ROOT_DIR="$(pwd)"
 CHAIN=songbird
 
-# Create the config file
 echo "{
-  \"extends\": \"songbird-bot-postgresql\",
+  \"extends\": \"songbird-bot-postgresql.json\",
   \"ormOptions\": {
-    \"type\": \"postgres\",
+    \"type\": \"postgresql\",
     \"host\": \"postgres\",
     \"dbName\": \"${FASSET_DB_NAME}\",
     \"port\": ${FASSET_DB_PORT}

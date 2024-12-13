@@ -70,7 +70,8 @@ Fund your underlying address with underlying token (e.g. XRP, BTC) (get addresse
 
 TODO: update setup address for Songbird and Flare
 
-Setup your work address `https://coston-explorer.flare.network/address/0x48985D96B5758285cB2c1A528c02da08BB874651/write-contract#address-tabs`
+Setup your work address:
+- on [Songbird](https://songbird-explorer.flare.network/address/0xa7f5d3C81f55f2b072FB62a0D4A03317BFd1a3c0/write-contract#address-tabs).
 
 ### Start up
 
