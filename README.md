@@ -60,7 +60,6 @@ Make backup of the `secrets.json`.
 
 Setup nodes rpc api keys.
 
-
 ### Funding addresses
 Fund your management address with native token (e.g. SGB, FLR).
 
@@ -83,6 +82,24 @@ docker compose down
 git pull
 docker compose pull
 docker compose up -d
+```
+
+### Execute Agent Bot Commands
+
+To execute agent bot commands, use the `cli` profile and `agent-bot` Docker container.
+For example to get agents running use this command:
+
+```bash
+docker-compose --profile cli run agent-bot listAgents --fasset FASSET
+```
+
+### Execute User Bot Commands
+
+To execute user bot commands use the `cli` profile and `user-bot` Docker container.
+For example to the FAsset system info use this command:
+
+```bash
+docker-compose --profile cli run user-bot info --fasset FASSET
 ```
 
 ### Backup 

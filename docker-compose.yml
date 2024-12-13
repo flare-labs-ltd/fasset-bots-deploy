@@ -95,6 +95,38 @@ services:
       postgres:
         condition: service_healthy        
 
+  agent-bot:
+    profiles: [cli]
+    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    container_name: ${COMPOSE_PROJECT_NAME}-agent-bot
+    volumes:
+      - ./.env:/usr/src/app/.env
+      - ./secrets.json:/usr/src/app/secrets.json
+      - ./config.json:/usr/src/app/config.json
+      - ./log/agent-bot:/usr/src/app/log/
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["yarn", "agent-bot"]
+
+  user-bot:
+    profiles: [cli]
+    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    container_name: ${COMPOSE_PROJECT_NAME}-user-bot
+    volumes:
+      - ./.env:/usr/src/app/.env
+      - ./secrets.json:/usr/src/app/secrets.json
+      - ./config.json:/usr/src/app/config.json
+      - ./log/user-bot:/usr/src/app/log/
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["yarn", "user-bot"]
+
   ui:
     profiles: [agent-ui]
     image: ghcr.io/flare-labs-ltd/fasset-agent-ui:songbird-release
