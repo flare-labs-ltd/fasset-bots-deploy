@@ -30,18 +30,10 @@ Make sure you follow best practices to protect you server and data.
 
 ## Settings
 
-All settings are in `.env`.
+All settings are in `.env.template`.
 
 This must be set:
 - machine address `MACHINE_ADDRESS`. This is either the IP or domain name of the machine running front and back end. For security reasons, it is recommended to use a local network IP.
-
-Optionaly set these:
-- front end port `FRONTEND_PORT`. Default front end port is 3000.
-- front end url `FRONTEND_PATH`. Default is `/` (example `/agent1`).
-- front end password `FRONTEND_PASSWORD`
-- back end port `BACKEND_PORT`. Default front end port is 4000.
-- back end url `BACKEND_PATH`. Default is `/fasset-backend` IMPORTANT this change must also be set in `config.json` `apiNotifierConfigs.apiUrl`.
-- database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not update automatically if changed in `.env` file.
 
 Profiles
 - agent
@@ -49,9 +41,13 @@ Profiles
 - liquidator
 - challenger
 
+### Generate configuration
+
+To generate the configuration, run `./populate_config.sh`.
+
 ### Generate secrets.json
 
-To generate accounts needed by the bot automatically, run `./generateSecrets.sh <your_agent_address>`.
+To generate accounts needed by the bot automatically, run `./generate_secrets.sh <your_management_address>`.
 
 Copy `secrets.new.json` into `secrets.json` and set file mode to 600 `chmod 600 secrets.json`.
 Set file ownership to user 1000 `chown 1000:1000 secrets.json`.
@@ -66,9 +62,6 @@ Fund your management address with native token (e.g. SGB, FLR).
 Fund your work address with native token (e.g. SGB, FLR) and vault token (e.g. USDX) (get address from `secrets.json` using key `owner.native.address`).
 
 Fund your underlying address with underlying token (e.g. XRP, BTC) (get addressed from file `secrets.json` key `owner.<token>.address`).
-
-
-TODO: update setup address for Songbird and Flare
 
 Setup your work address:
 - on [Songbird](https://songbird-explorer.flare.network/address/0xa7f5d3C81f55f2b072FB62a0D4A03317BFd1a3c0/write-contract#address-tabs).
