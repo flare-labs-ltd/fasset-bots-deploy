@@ -33,7 +33,7 @@ Make sure you follow best practices to protect you server and data.
 All settings are in `.env`.
 
 This must be set:
-- machine address `MACHINE_ADDRESS`
+- machine address `MACHINE_ADDRESS`. This is either the IP or domain name of the machine running front and back end. For security reasons, it is recommended to use a local network IP.
 
 Optionaly set these:
 - front end port `FRONTEND_PORT`. Default front end port is 3000.
@@ -41,7 +41,7 @@ Optionaly set these:
 - front end password `FRONTEND_PASSWORD`
 - back end port `BACKEND_PORT`. Default front end port is 4000.
 - back end url `BACKEND_URL`. Default is `/fasset-backend` IMPORTANT this change must also be set in `config.json` `apiNotifierConfigs.apiUrl`.
-- database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not changed automatically by chainging it in `.env` file.
+- database password `FASSET_DB_PASSWORD` IMPORTANT: once database is created the password will not update automatically if changed in `.env` file.
 
 Profiles
 - agent
@@ -51,7 +51,7 @@ Profiles
 
 ### Generate secrets.json
 
-Run `./generateSecrets.sh <your_agent_address>`.
+To generate accounts needed by the bot automatically, run `./generateSecrets.sh <your_agent_address>`.
 
 Copy `secrets.new.json` into `secrets.json` and set file mode to 600 `chmod 600 secrets.json`.
 Set file ownership to user 1000 `chown 1000:1000 secrets.json`.
@@ -63,9 +63,9 @@ Setup nodes rpc api keys.
 ### Funding addresses
 Fund your management address with native token (e.g. SGB, FLR).
 
-Fund your work address with native token (e.g. SGB, FLR) and vault token (e.g. ETH, USDX) (get addresse from file `secrets.json` key `owner.native.address`).
+Fund your work address with native token (e.g. SGB, FLR) and vault token (e.g. USDX) (get address from `secrets.json` using key `owner.native.address`).
 
-Fund your underlying address with underlying token (e.g. XRP, BTC, XRP, BTC) (get addressed from file `secrets.json` key  `owner.<token>.address`).)
+Fund your underlying address with underlying token (e.g. XRP, BTC) (get addressed from file `secrets.json` key `owner.<token>.address`).
 
 
 TODO: update setup address for Songbird and Flare
@@ -84,25 +84,7 @@ docker compose pull
 docker compose up -d
 ```
 
-### Execute Agent Bot Commands
-
-To execute agent bot commands, use the `cli` profile and `agent-bot` Docker container.
-For example to get agents running use this command:
-
-```bash
-docker-compose --profile cli run agent-bot listAgents --fasset FASSET
-```
-
-### Execute User Bot Commands
-
-To execute user bot commands use the `cli` profile and `user-bot` Docker container.
-For example to the FAsset system info use this command:
-
-```bash
-docker-compose --profile cli run user-bot info --fasset FASSET
-```
-
-### Backup 
+### Backup
 
 Make sure you backup at least:
 - `.env`

@@ -11,7 +11,7 @@
             "max": 80,
             "acquireTimeoutMillis": 60000
         }
-     },     
+     },
      "apiNotifierConfigs": [
         {
              "apiKey": "someAp1K3y",
