@@ -33,7 +33,8 @@ Make sure you follow best practices to protect you server and data.
 All settings are in `.env.template`.
 
 This must be set:
-- machine address `MACHINE_ADDRESS`. This is either the IP or domain name of the machine running front and back end. For security reasons, it is recommended to use a local network IP.
+- machine address `MACHINE_ADDRESS`. This is either the IP or domain name of the machine running front and back end.
+For security reasons, it is recommended to use a local network IP or configure firewall so that `MACHINE_ADDRESS` can be access only from your IP.
 
 Profiles
 - agent
