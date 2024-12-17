@@ -3,10 +3,10 @@
 source <(grep -v '^#' "./.env" | sed -E 's|^(.+)=(.*)$|: ${\1=\2}; export \1|g')
 
 ROOT_DIR="$(pwd)"
-CHAIN=songbird
+CHAIN=coston
 
 echo "{
-  \"extends\": \"songbird-bot-postgresql.json\",
+  \"extends\": \"${CHAIN}-bot-postgresql.json\",
   \"ormOptions\": {
     \"type\": \"postgresql\",
     \"host\": \"postgres\",

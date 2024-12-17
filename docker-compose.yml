@@ -8,9 +8,6 @@ services:
       POSTGRES_USER: ${FASSET_DB_USER}
       POSTGRES_PASSWORD: ${FASSET_DB_PASSWORD}
       DEBUG: "true"
-    # for testing
-    #ports:
-    #  - "15432:5432"
     volumes:
       - postgres-db:/var/lib/postgresql/data
     healthcheck:
@@ -20,8 +17,7 @@ services:
 
   app:
     profiles: [agent]
-    #image: fasset-bots
-    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}
     environment:
       DB_NAME: ${FASSET_DB_NAME}
@@ -29,19 +25,15 @@ services:
       DB_PORT: ${FASSET_DB_PORT}
       DB_USER: ${FASSET_DB_USER}
       DB_PASSWORD: ${FASSET_DB_PASSWORD}
-      FASSET_DB_USER: ${FASSET_DB_USER}
-      FASSET_DB_PASSWORD: ${FASSET_DB_PASSWORD}
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
-      ROOT_PATH: ${FRONTEND_BACKEND_PATH}
-    # for back-end
+      ROOT_PATH: ${BACKEND_PATH:-}
+      LOG_TARGET: ${LOG_TARGET:-}
     ports:
       - "$BACKEND_PORT:1234"
     volumes:
       - ./.env:/usr/src/app/.env
-      - ./config/.env.bots-api:/usr/src/app/packages/fasset-bots-api/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
-      # export logs
       - ./log/app:/usr/src/app/log/
       - ./log/app-bots-api:/usr/src/app/packages/fasset-bots-api/log/
 
@@ -53,17 +45,21 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    labels:
+      logging: promtail
+      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_agent"
 
   liquidator:
     profiles: [liquidator]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
       - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
-      # export logs
       - ./log/liquidator:/usr/src/app/log/
+    environment:
+      LOG_TARGET: ${LOG_TARGET}
 
     # Start run-agent and ui backend
     command: "./entry.sh run-liquidator"
@@ -73,17 +69,21 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    labels:
+      logging: promtail
+      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_liquidator"
 
   challenger:
     profiles: [challenger]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-challenger
     volumes:
       - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
-      # export logs
       - ./log/challenger:/usr/src/app/log/
+    environment:
+      LOG_TARGET: ${LOG_TARGET}
 
     # Start run-agent and ui backend
     command: "./entry.sh run-challenger"
@@ -93,10 +93,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    labels:
+      logging: promtail
+      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_challenger"
 
   agent-bot:
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-agent-bot
     volumes:
       - ./.env:/usr/src/app/.env
@@ -112,7 +115,7 @@ services:
 
   user-bot:
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-user-bot
     volumes:
       - ./.env:/usr/src/app/.env
@@ -128,12 +131,12 @@ services:
 
   ui:
     profiles: [agent-ui]
-    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:songbird-release
+    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:main
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     environment:
-      API_URL: ${FRONTEND_BACKEND_URL}
-      FRONT_URL: ${FRONTEND_PATH}
-      FRONTEND_URL: ${FRONTEND_URL}
+      API_URL: ${MACHINE_ADDRESS}:${BACKEND_PORT}${BACKEND_PATH}/api
+      FRONT_URL: ${FRONTEND_PATH:-}
+      FRONTEND_URL: ${FRONTEND_PATH:-}
       WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
     ports:
       - "$FRONTEND_PORT:3000"
@@ -145,6 +148,27 @@ services:
 
     stdin_open: true
     tty: true
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-promtail
+    profiles: ["send-logs"]
+    restart: unless-stopped
+    environment:
+      PROMTAIL_HTTP_PORT: ${PROMTAIL_HTTP_PORT:-'unix:///var/run/docker.sock'}
+      PROMTAIL_POSITIONS_FILE: ${PROMTAIL_POSITIONS_FILE:-/tmp/positions.yaml}
+      LOKI_URL: ${LOKI_URL:-}
+      DOCKER_SOCKET: ${PROMTAIL_DOCKER_SOCKET:-}
+      REFRESH_INTERVAL: ${PROMTAIL_REFRESH_INTERVAL:-5s}
+      LOGGING_LABEL: ${PROMTAIL_LOGGING_LABEL:-fasset}
+      HOSTNAME: ${PROMTAIL_HOSTNAME}
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+    command:
+      - "-config.expand-env=true"
+      - "-config.file=/etc/promtail/config.yml"
 
 volumes:
   postgres-db:

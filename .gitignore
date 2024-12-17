@@ -1,5 +1,6 @@
 .env
 config.json
 secrets*.json
-log/**/*.log
-log/**/*.json
+log/**/*.log*
+log/**/*.json*
+log/**/*.gz

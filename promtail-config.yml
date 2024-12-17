@@ -1,0 +1,28 @@
+server:
+  http_listen_port: ${PROMTAIL_HTTP_PORT:-9080}    # Uses PROMTAIL_HTTP_PORT or defaults to 9080
+  grpc_listen_port: ${PROMTAIL_GRPC_PORT:-0}       # Uses PROMTAIL_GRPC_PORT or defaults to 0
+
+positions:
+  filename: ${PROMTAIL_POSITIONS_FILE:-/tmp/positions.yaml}  # Position file location
+
+clients:
+  - url: ${LOKI_URL:-http://blackhole.matheo.si/loki/api/v1/push}  # Loki server URL
+
+scrape_configs:
+  - job_name: flog_scrape
+    docker_sd_configs:
+      - host: ${PROMTAIL_DOCKER_SOCKET:-}  # Docker socket path
+        refresh_interval: ${PROMTAIL_REFRESH_INTERVAL:-5s}
+        filters:
+          - name: label
+            values: ["logging=${PROMTAIL_LOGGING_LABEL:-promtail}"]
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'logstream'
+      - source_labels: ['__meta_docker_container_label_logging_jobname']
+        target_label: 'job'
+      - target_label: 'hostname'      # The label you want to create or overwrite
+        replacement: '${HOSTNAME}'  # The static value for the label
