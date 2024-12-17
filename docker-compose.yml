@@ -1,6 +1,6 @@
 services:
   postgres:
-    profiles: [agent,liquidator,challenger]
+    profiles: [agent,liquidator,challenger,cli]
     image: postgres:15
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
     environment:
