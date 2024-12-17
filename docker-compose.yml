@@ -6,6 +6,7 @@ services:
     environment:
       POSTGRES_DB: ${FASSET_DB_NAME}
       POSTGRES_USER: ${FASSET_DB_USER}
+      POSTGRES_PORT: ${FASSET_DB_PORT}
       POSTGRES_PASSWORD: ${FASSET_DB_PASSWORD}
       DEBUG: "true"
     volumes:
@@ -20,26 +21,18 @@ services:
     image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}
     environment:
-      DB_NAME: ${FASSET_DB_NAME}
-      DB_HOST: postgres
-      DB_PORT: ${FASSET_DB_PORT}
-      DB_USER: ${FASSET_DB_USER}
-      DB_PASSWORD: ${FASSET_DB_PASSWORD}
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
       ROOT_PATH: ${BACKEND_PATH:-}
       LOG_TARGET: ${LOG_TARGET:-}
+      FASSET_BOT_CONFIG: "./config.json"
+      FASSET_BOT_SECRETS: "./secrets.json"
     ports:
       - "$BACKEND_PORT:1234"
     volumes:
-      - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/app:/usr/src/app/log/
-      - ./log/app-bots-api:/usr/src/app/packages/fasset-bots-api/log/
-
-    # Start run-agent and ui backend
     command: "./entry.sh run-bots"
-
     stdin_open: true
     tty: true
     depends_on:
@@ -47,23 +40,21 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_agent"
+      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_agent"
 
   liquidator:
     profiles: [liquidator]
     image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
-      - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/liquidator:/usr/src/app/log/
     environment:
       LOG_TARGET: ${LOG_TARGET}
-
-    # Start run-agent and ui backend
+      FASSET_BOT_CONFIG: "./config.json"
+      FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-liquidator"
-
     stdin_open: true
     tty: true
     depends_on:
@@ -71,23 +62,21 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_liquidator"
+      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_liquidator"
 
   challenger:
     profiles: [challenger]
     image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-challenger
     volumes:
-      - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/challenger:/usr/src/app/log/
     environment:
       LOG_TARGET: ${LOG_TARGET}
-
-    # Start run-agent and ui backend
+      FASSET_BOT_CONFIG: "./config.json"
+      FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-challenger"
-
     stdin_open: true
     tty: true
     depends_on:
@@ -95,14 +84,13 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_USER_NAME:-}_fasset_challenger"
+      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_challenger"
 
   agent-bot:
     profiles: [cli]
     image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-agent-bot
     volumes:
-      - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/agent-bot:/usr/src/app/log/
@@ -112,13 +100,15 @@ services:
       postgres:
         condition: service_healthy
     entrypoint: ["yarn", "agent-bot"]
+    environment:
+      FASSET_BOT_CONFIG: "./config.json"
+      FASSET_BOT_SECRETS: "./secrets.json"
 
   user-bot:
     profiles: [cli]
     image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-user-bot
     volumes:
-      - ./.env:/usr/src/app/.env
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/user-bot:/usr/src/app/log/
@@ -128,24 +118,22 @@ services:
       postgres:
         condition: service_healthy
     entrypoint: ["yarn", "user-bot"]
+    environment:
+      FASSET_USER_SECRETS: "./secrets.json"
+      FASSET_USER_CONFIG: "./config.json"
 
   ui:
     profiles: [agent-ui]
     image: ghcr.io/flare-labs-ltd/fasset-agent-ui:main
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     environment:
-      API_URL: ${MACHINE_ADDRESS}:${BACKEND_PORT}${BACKEND_PATH}/api
+      API_URL: ${MACHINE_ADDRESS}:${BACKEND_PORT}${BACKEND_PATH:-}/api
+      WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
       FRONT_URL: ${FRONTEND_PATH:-}
       FRONTEND_URL: ${FRONTEND_PATH:-}
-      WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
     ports:
       - "$FRONTEND_PORT:3000"
-    volumes:
-      - ./.env:/app/.env
-
-    # Start with running the agent
     command: "/bin/sh -c '(npm run build) && (npm run start)'"
-
     stdin_open: true
     tty: true
 
@@ -155,12 +143,12 @@ services:
     profiles: ["send-logs"]
     restart: unless-stopped
     environment:
+      LOKI_URL: ${LOKI_URL:-}
       PROMTAIL_HTTP_PORT: ${PROMTAIL_HTTP_PORT:-'unix:///var/run/docker.sock'}
       PROMTAIL_POSITIONS_FILE: ${PROMTAIL_POSITIONS_FILE:-/tmp/positions.yaml}
-      LOKI_URL: ${LOKI_URL:-}
       DOCKER_SOCKET: ${PROMTAIL_DOCKER_SOCKET:-}
       REFRESH_INTERVAL: ${PROMTAIL_REFRESH_INTERVAL:-5s}
-      LOGGING_LABEL: ${PROMTAIL_LOGGING_LABEL:-fasset}
+      LOGGING_LABEL: ${PROMTAIL_LOGGING_LABEL:-promtail}
       HOSTNAME: ${PROMTAIL_HOSTNAME}
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro

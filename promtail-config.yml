@@ -6,16 +6,16 @@ positions:
   filename: ${PROMTAIL_POSITIONS_FILE:-/tmp/positions.yaml}  # Position file location
 
 clients:
-  - url: ${LOKI_URL:-http://blackhole.matheo.si/loki/api/v1/push}  # Loki server URL
+  - url: ${LOKI_URL}  # Loki server URL
 
 scrape_configs:
   - job_name: flog_scrape
     docker_sd_configs:
-      - host: ${PROMTAIL_DOCKER_SOCKET:-}  # Docker socket path
-        refresh_interval: ${PROMTAIL_REFRESH_INTERVAL:-5s}
+      - host: ${DOCKER_SOCKET:-}  # Docker socket path
+        refresh_interval: ${REFRESH_INTERVAL:-5s}
         filters:
           - name: label
-            values: ["logging=${PROMTAIL_LOGGING_LABEL:-promtail}"]
+            values: ["logging=${LOGGING_LABEL:-promtail}"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
         regex: '/(.*)'
