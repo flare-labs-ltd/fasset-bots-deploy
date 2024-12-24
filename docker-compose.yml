@@ -40,7 +40,7 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_agent"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_agent"
 
   liquidator:
     profiles: [liquidator]
@@ -62,7 +62,7 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_liquidator"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_liquidator"
 
   challenger:
     profiles: [challenger]
@@ -84,7 +84,7 @@ services:
         condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_challenger"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_challenger"
 
   agent-bot:
     profiles: [cli]
