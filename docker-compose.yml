@@ -18,7 +18,7 @@ services:
 
   app:
     profiles: [agent]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}
     environment:
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
@@ -44,7 +44,7 @@ services:
 
   liquidator:
     profiles: [liquidator]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -66,7 +66,7 @@ services:
 
   challenger:
     profiles: [challenger]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-challenger
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -88,7 +88,7 @@ services:
 
   agent-bot:
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-agent-bot
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -106,7 +106,7 @@ services:
 
   user-bot:
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
     container_name: ${COMPOSE_PROJECT_NAME}-user-bot
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -124,7 +124,7 @@ services:
 
   ui:
     profiles: [agent-ui]
-    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:main
+    image: ghcr.io/flare-labs-ltd/fasset-agent-ui:latest
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     environment:
       API_URL: ${MACHINE_ADDRESS}:${BACKEND_PORT}${BACKEND_PATH:-}/api
