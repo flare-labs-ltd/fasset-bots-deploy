@@ -19,6 +19,6 @@ echo "{
   },
   \"apiNotifierConfigs\": [{
     \"apiKey\": \"$NOTIFIER_API_KEY\",
-    \"apiUrl\": \"$MACHINE_ADDRESS:$BACKEND_PORT$BACKEND_PATH\"
+    \"apiUrl\": \"http://localhost:$BACKEND_PORT$BACKEND_PATH\"
   }]
 }" > $ROOT_DIR/config.json
