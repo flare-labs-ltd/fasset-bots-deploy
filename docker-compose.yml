@@ -1,3 +1,12 @@
+x-templates:
+  x-fasset-bot-template: &fasset-bot
+    image: ghcr.io/flare-labs-ltd/fasset-bots:latest
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 services:
   postgres:
     profiles: [agent,liquidator,challenger,cli]
@@ -15,10 +24,9 @@ services:
       test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d ${FASSET_DB_NAME} -h 127.0.0.1"]
       timeout: 20s
       retries: 10
-
   app:
+    <<: *fasset-bot
     profiles: [agent]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}
     environment:
       FRONTEND_PASSWORD: ${FRONTEND_PASSWORD}
@@ -33,18 +41,13 @@ services:
       - ./config.json:/usr/src/app/config.json
       - ./log/app:/usr/src/app/log/
     command: "./entry.sh run-bots"
-    stdin_open: true
-    tty: true
-    depends_on:
-      postgres:
-        condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_agent"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_agent"
 
   liquidator:
+    <<: *fasset-bot
     profiles: [liquidator]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-liquidator
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -55,18 +58,13 @@ services:
       FASSET_BOT_CONFIG: "./config.json"
       FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-liquidator"
-    stdin_open: true
-    tty: true
-    depends_on:
-      postgres:
-        condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_liquidator"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_liquidator"
 
   challenger:
+    <<: *fasset-bot
     profiles: [challenger]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-challenger
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
@@ -77,46 +75,31 @@ services:
       FASSET_BOT_CONFIG: "./config.json"
       FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-challenger"
-    stdin_open: true
-    tty: true
-    depends_on:
-      postgres:
-        condition: service_healthy
     labels:
       logging: promtail
-      logging_jobname: "${PROMTAIL_HOST_NAME:-}_fasset_challenger"
+      logging_jobname: "${PROMTAIL_HOSTNAME:-}_fasset_challenger"
 
   agent-bot:
+    <<: *fasset-bot
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-agent-bot
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/agent-bot:/usr/src/app/log/
-    stdin_open: true
-    tty: true
-    depends_on:
-      postgres:
-        condition: service_healthy
     entrypoint: ["yarn", "agent-bot"]
     environment:
       FASSET_BOT_CONFIG: "./config.json"
       FASSET_BOT_SECRETS: "./secrets.json"
 
   user-bot:
+    <<: *fasset-bot
     profiles: [cli]
-    image: ghcr.io/flare-labs-ltd/fasset-bots:main
     container_name: ${COMPOSE_PROJECT_NAME}-user-bot
     volumes:
       - ./secrets.json:/usr/src/app/secrets.json
       - ./config.json:/usr/src/app/config.json
       - ./log/user-bot:/usr/src/app/log/
-    stdin_open: true
-    tty: true
-    depends_on:
-      postgres:
-        condition: service_healthy
     entrypoint: ["yarn", "user-bot"]
     environment:
       FASSET_USER_SECRETS: "./secrets.json"
@@ -127,7 +110,7 @@ services:
     image: ghcr.io/flare-labs-ltd/fasset-agent-ui:main
     container_name: ${COMPOSE_PROJECT_NAME}-ui
     environment:
-      API_URL: ${MACHINE_ADDRESS}:${BACKEND_PORT}${BACKEND_PATH:-}/api
+      API_URL: ${FRONTEND_API_URL}
       WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
       FRONT_URL: ${FRONTEND_PATH:-}
       FRONTEND_URL: ${FRONTEND_PATH:-}
