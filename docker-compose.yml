@@ -1,6 +1,7 @@
 x-templates:
   x-fasset-bot-template: &fasset-bot
     image: ghcr.io/flare-labs-ltd/fasset-bots:latest
+    restart: unless-stopped
     stdin_open: true
     tty: true
     depends_on:
@@ -12,6 +13,7 @@ services:
     profiles: [agent,liquidator,challenger,cli]
     image: postgres:15
     container_name: ${COMPOSE_PROJECT_NAME}-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${FASSET_DB_NAME}
       POSTGRES_USER: ${FASSET_DB_USER}
@@ -109,6 +111,7 @@ services:
     profiles: [agent-ui]
     image: ghcr.io/flare-labs-ltd/fasset-agent-ui:latest
     container_name: ${COMPOSE_PROJECT_NAME}-ui
+    restart: unless-stopped
     environment:
       API_URL: ${FRONTEND_API_URL}
       WALLETCONNECT_PROJECT_ID: ${WALLETCONNECT_PROJECT_ID}
