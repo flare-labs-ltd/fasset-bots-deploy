@@ -16,7 +16,7 @@ Tested on Ubuntu 22.04.4 LTS.
 
 ### Security
 
-Make sure you follow best practices to protect you server and data.
+Make sure you follow best practices to protect your server and data.
 
 ## Install
 

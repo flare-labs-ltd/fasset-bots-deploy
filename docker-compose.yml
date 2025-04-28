@@ -26,6 +26,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U $FASSET_DB_USER -d ${FASSET_DB_NAME} -h 127.0.0.1"]
       timeout: 20s
       retries: 10
+
   app:
     <<: *fasset-bot
     profiles: [agent]
@@ -43,9 +44,6 @@ services:
       - ./config.json:/usr/src/app/config.json
       - ./log/app:/usr/src/app/log/
     command: "./entry.sh run-bots"
-    labels:
-      logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_agent"
 
   liquidator:
     <<: *fasset-bot
@@ -60,9 +58,6 @@ services:
       FASSET_BOT_CONFIG: "./config.json"
       FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-liquidator"
-    labels:
-      logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_liquidator"
 
   challenger:
     <<: *fasset-bot
@@ -77,9 +72,6 @@ services:
       FASSET_BOT_CONFIG: "./config.json"
       FASSET_BOT_SECRETS: "./secrets.json"
     command: "./entry.sh run-challenger"
-    labels:
-      logging: promtail
-      logging_jobname: "${PROMTAIL_HOSTNAME:-anonymous}_fasset_challenger"
 
   agent-bot:
     <<: *fasset-bot
@@ -122,27 +114,6 @@ services:
     command: "/bin/sh -c '(npm run build) && (npm run start)'"
     stdin_open: true
     tty: true
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: ${COMPOSE_PROJECT_NAME}-promtail
-    profiles: ["send-logs"]
-    restart: unless-stopped
-    environment:
-      LOKI_URL: ${LOKI_URL:-}
-      PROMTAIL_HTTP_PORT: ${PROMTAIL_HTTP_PORT:-'unix:///var/run/docker.sock'}
-      PROMTAIL_POSITIONS_FILE: ${PROMTAIL_POSITIONS_FILE:-/tmp/positions.yaml}
-      DOCKER_SOCKET: ${PROMTAIL_DOCKER_SOCKET:-}
-      REFRESH_INTERVAL: ${PROMTAIL_REFRESH_INTERVAL:-5s}
-      LOGGING_LABEL: ${PROMTAIL_LOGGING_LABEL:-promtail}
-      HOSTNAME: ${PROMTAIL_HOSTNAME}
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./promtail-config.yml:/etc/promtail/config.yml:ro
-    command:
-      - "-config.expand-env=true"
-      - "-config.file=/etc/promtail/config.yml"
 
 volumes:
   postgres-db:
