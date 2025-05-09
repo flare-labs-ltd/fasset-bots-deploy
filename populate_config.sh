@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 source <(grep -v '^#' "./.env" | sed -E 's|^(.+)=(.*)$|: ${\1=\2}; export \1|g')
 
-CONFIG_PATH="$PWD/tmp/config.json"
-SECRETS_PATH="$PWD/tmp/secrets.json"
+CONFIG_PATH="$PWD/config.json"
+SECRETS_PATH="$PWD/secrets.json"
 
 NOTIFIER_API_URL="http://localhost:1234${BACKEND_PATH}"
 API_NOTIFIER_CONFIG=$(cat <<EOF
@@ -74,7 +74,7 @@ update_config_json ".
     | (.ormOptions.type = \"postgresql\")
     | (.ormOptions.host = \"postgres\")
     | (.ormOptions.dbName = \"${FASSET_DB_NAME}\")
-    | (.ormOptions.port = ${FASSET_DB_PORT})"
+    | (.ormOptions.port = 5432)"
 
 # check notifier api key placement inside config
 push_notifier_config=1
