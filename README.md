@@ -12,7 +12,7 @@ Tested on Ubuntu 22.04.4 LTS.
 ## Prerequisites
 
 - Your agent management address must be whitelisted.
-- Procure underlying nodes rpc api keys (DOGE, XRP, BTC).
+- Procure underlying nodes rpc api keys (XRP, DOGE, BTC).
 
 ### Security
 
@@ -24,9 +24,7 @@ Make sure you follow best practices to protect your server and data.
 
 2. Copy `.env.template` to `.env`.
 
-3. Copy `config.json.template` into `config.json`.
-
-4. Run `docker compose pull`.
+3. Run `docker compose pull`.
 
 ## Settings
 
@@ -52,14 +50,15 @@ Make backup of the `secrets.json`.
 
 Make sure to setup rpc/DAL/FDC api keys.
 
-### Generate configuration
+### Generate / update configuration
 
-To generate the configuration, run
+To generate or update configuration after `.env` file change, run
 ```
 bash populate_config.sh
 ```
 
 ### Funding addresses
+
 Fund your management address with native token (e.g. SGB, FLR).
 
 Fund your work address with native token (e.g. SGB, FLR) and vault token (e.g. USDX) (get address from `secrets.json` using key `owner.native.address`).
