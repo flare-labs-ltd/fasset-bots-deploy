@@ -28,7 +28,7 @@ generate_secrets() {
 safe_json_update() {
     tmp="$(mktemp "$(dirname "$2")/config.XXXXXX.json")"
     if ! jq "$1" "$2" > "$tmp"; then
-        echo "✗ jq failed updating $2." >&2
+        echo "jq failed updating $2." >&2
         rm -f "$tmp"
         return 1
     fi
@@ -66,36 +66,37 @@ fi
 # write chain configuration
 update_config_json ".extends = \"${CHAIN}-bot-postgresql.json\""
 
-# write database configuration
-update_secrets_json ".
-    | (.database.user = \"${FASSET_DB_USER}\")
-    | (.database.password = \"${FASSET_DB_PASSWORD}\")"
+# write frontend password inside config
+update_secrets_json ".apiKey.agent_bot = \"${FRONTEND_PASSWORD}\""
+
+# write notifier api key inside secrets
+update_secrets_json ".apiKey.notifier_key = \"${NOTIFIER_API_KEY}\""
+
+# write database config
 update_config_json ".
     | (.ormOptions.type = \"postgresql\")
     | (.ormOptions.host = \"postgres\")
     | (.ormOptions.dbName = \"${FASSET_DB_NAME}\")
     | (.ormOptions.port = 5432)"
 
-# check notifier api key placement inside config
+# write database secrets
+update_secrets_json ".
+    | (.database.user = \"${FASSET_DB_USER}\")
+    | (.database.password = \"${FASSET_DB_PASSWORD}\")"
+
+# update notifier api key inside config
 push_notifier_config=1
 if ! jq -e 'has("apiNotifierConfigs")' $CONFIG_PATH > /dev/null; then
     update_config_json '.apiNotifierConfigs = []'
 else
-    n_notifiers=$(fetch_config_json '.apiNotifierConfigs | length')
-    for i in $(seq 0 $n_notifiers); do
-        api_url=$(fetch_config_json ".apiNotifierConfigs[$i].apiUrl")
+    for i in $(seq 0 $(fetch_config_json '.apiNotifierConfigs | length')); do
         if jq -e ".apiNotifierConfigs[$i].apiUrl == \"$NOTIFIER_API_URL\"" $CONFIG_PATH > /dev/null; then
             update_config_json ".apiNotifierConfigs[$i].apiKey = \"$NOTIFIER_API_KEY\""
             push_notifier_config=0
+            break
         fi
     done
 fi
 if [ $push_notifier_config == 1 ]; then
     update_config_json ".apiNotifierConfigs += [$API_NOTIFIER_CONFIG]"
 fi
-
-# write notifier api key placement inside secrets
-update_secrets_json ".apiKey.notifier_key = \"${NOTIFIER_API_KEY}\""
-
-# write frontend password placement inside config
-update_secrets_json ".apiKey.agent_bot = \"${FRONTEND_PASSWORD}\""
