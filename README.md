@@ -42,20 +42,22 @@ Profiles
 - liquidator
 - challenger
 
-### Generate configuration
-
-To generate the configuration, run `./populate_config.sh`.
-
 ### Generate secrets.json
 
-To generate accounts needed by the bot automatically, run `./generate_secrets.sh <your_management_address>`.
+To generate accounts needed by the bot automatically, choose a secure agent management EVM address and write it under `AGENT_MANAGEMENT_ADDRESS` inside `.env` file, then run `bash populate_config.sh`.
 
-Copy `secrets.new.json` into `secrets.json` and set file mode to 600 `chmod 600 secrets.json`.
-Set file ownership to user 1000 `chown 1000:1000 secrets.json`.
+Set file mode to 600 `chmod 600 secrets.json` and file ownership to user 1000 `chown 1000:1000 secrets.json`.
 
 Make backup of the `secrets.json`.
 
-Setup nodes rpc api keys.
+Make sure to setup rpc/DAL/FDC api keys.
+
+### Generate configuration
+
+To generate the configuration, run
+```
+bash populate_config.sh
+```
 
 ### Funding addresses
 Fund your management address with native token (e.g. SGB, FLR).
@@ -85,7 +87,7 @@ To execute agent bot commands, use the `cli` profile and `agent-bot` Docker cont
 For example to get agents running use this command:
 
 ```bash
-docker-compose --profile cli run agent-bot listAgents --fasset FASSET
+docker compose --profile cli run agent-bot listAgents --fasset FASSET
 ```
 
 ### Execute User Bot Commands
@@ -94,7 +96,7 @@ To execute user bot commands use the `cli` profile and `user-bot` Docker contain
 For example to the FAsset system info use this command:
 
 ```bash
-docker-compose --profile cli run user-bot info --fasset FASSET
+docker compose --profile cli run user-bot info --fasset FASSET
 ```
 
 ### Backup
